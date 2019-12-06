@@ -44,7 +44,7 @@ def profile():
         if response.status_code == 200:
             print(f"Profile: \n{response.json()}")
             open_token.close()
-            print(f"status code = {response.status_code}")
+            # print(f"status code = {response.status_code}")
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
 
@@ -67,7 +67,7 @@ def list_of_orders(type = "sell", srcCurrency = None, dstCurrency = "usdt"):
         response.raise_for_status()
         if response.status_code == 200:
             print(f"List of Order: \n{response.json()}")
-            print(f"status code = {response.status_code}")
+            # print(f"status code = {response.status_code}")
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
         
@@ -89,7 +89,7 @@ def list_of_trades(srcCurrency, dstCurrency, myTradesOnly = "no"):
         response.raise_for_status()
         if response.status_code == 200:
             print(f"List of Trades: \n{response.json()}")
-            print(f"status code = {response.status_code}")
+            # print(f"status code = {response.status_code}")
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
 def nobitex_statistics(srcCurrency, dstCurrency):
@@ -132,7 +132,7 @@ def OHLC(symbol, resolution, from_, to):
         )
         response.raise_for_status()
         if response.status_code == 200:
-            print(response.status_code)
+            # print(response.status_code)
             print(response.json())
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
@@ -147,10 +147,69 @@ def global_statistics():
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
 
-login("miladazami120@gmail.com", "Sa3257121600")
+def login_attempts():
+    open_token = open("token.txt", "r")
+    token = open_token.read()
+    header = {"Authorization": "Token " + token}
+    try:
+        response = requests.post(
+            url=URL + "/users/login-attempts",
+            headers = header
+        )
+        response.raise_for_status()
+        if response.status_code == 200:
+            print(f"Your login history: \n{response.json()}")
+            open_token.close()
+            # print(f"status code = {response.status_code}")
+    except requests.exceptions.RequestException as error2:
+        print(f"ERROR! \n{error2}")
+
+def referral_code():
+    open_token = open("token.txt", "r")
+    token = open_token.read()
+    header = {"Authorization": "Token " + token}
+    try:
+        response = requests.post(
+            url=URL + "/users/get-referral-code",
+            headers=header
+        )
+        response.raise_for_status()
+        if response.status_code == 200:
+            print(f"Your referral code: \n{response.json()['referralCode']}")
+            open_token.close()
+            # print(f"status code = {response.status_code}")
+    except requests.exceptions.RequestException as error2:
+        print(f"ERROR! \n{error2}")
+
+def add_card_number(card_number, bank_name):
+    open_token = open("token.txt", "r")
+    token = open_token.read()
+    header = {"Authorization": "Token " + token}
+    open_token.close()
+    try:
+        response = requests.post(
+            url=URL + "/users/cards-add",
+            headers=header,
+            json={
+                "number": card_number,
+                "bank": bank_name
+            }''
+        )
+        response.raise_for_status()
+        if response.status_code == 200:
+            print(f"Completed. \n{response.json()}")
+            print(response.status_code)
+    except requests.exceptions.RequestException as error2:
+        print(f"ERROR! \n{error2}")
+
+# login("miladazami120@gmail.com", "Sa3257121600")
 # profile()
 # list_of_orders("buy")
 # list_of_trades("btc", "rls")
 # nobitex_statistics("btc", "usdt")
-# OHLC("BTCIR", "D", "1567424381", "1567395581")
+# OHLC("btcusdt, "D", "1567424381", "1567395581")
 # print(global_statistics())
+# login_attempts()
+# referral_code()
+add_card_number("6037991819562458", "بانک ملی")
+# profile()
