@@ -4,11 +4,11 @@ URL = "https://testnetapi.nobitex.net"
 
 def login(username, password):
     file_save_token = open("token.txt", "w")
-    header = {"Content-Type" : "application/json"}
+    header = {"Content-Type": "application/json"}
     try:
         response = requests.post(
             url=URL + '/auth/login/',
-            headers = header,
+            headers=header,
             json={
                 "username": username,
                 "password": password,
@@ -38,7 +38,7 @@ def profile():
     try:
         response = requests.post(
             url=URL + "/users/profile",
-            headers = header
+            headers=header
         )
         response.raise_for_status()
         if response.status_code == 200:
@@ -184,7 +184,8 @@ def referral_code():
 def add_card_number(card_number, bank_name):
     open_token = open("token.txt", "r")
     token = open_token.read()
-    header = {"Authorization": "Token " + token}
+    header = {"Authorization": "Token " + token,
+              "content-type": "application/json"}
     open_token.close()
     try:
         response = requests.post(
@@ -193,7 +194,7 @@ def add_card_number(card_number, bank_name):
             json={
                 "number": card_number,
                 "bank": bank_name
-            }''
+            }
         )
         response.raise_for_status()
         if response.status_code == 200:
@@ -202,14 +203,96 @@ def add_card_number(card_number, bank_name):
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
 
+def add_account_number(account_number, shaba_number, bank_name):
+    open_token = open("token.txt", "r")
+    token = open_token.read()
+    header = {"Authorization": "Token " + token,
+              "content-type": "application/json"}
+    open_token.close()
+    try:
+        response = requests.post(
+            url=URL + "/users/accounts-add",
+            headers=header,
+            json={
+                "number": account_number,
+                "shaba": shaba_number,
+                "bank": bank_name
+            }
+        )
+        response.raise_for_status()
+        if response.status_code == 200:
+            print(f"Completed. \n{response.json()}")
+            print(response.status_code)
+    except requests.exceptions.RequestException as error2:
+        print(f"ERROR! \n{error2}")
+
+def limitations():
+    open_token = open("token.txt", "r")
+    token = open_token.read()
+    header = {"Authorization": "Token " + token}
+    try:
+        response = requests.post(
+            url=URL + "/users/limitations",
+            headers=header
+        )
+        response.raise_for_status()
+        if response.status_code == 200:
+            print(f"Your limitaions: \n{response.json()}")
+            open_token.close()
+            # print(f"status code = {response.status_code}")
+    except requests.exceptions.RequestException as error2:
+        print(f"ERROR! \n{error2}")
+
+def wallets_list():
+    open_token = open("token.txt", "r")
+    token = open_token.read()
+    header = {"Authorization": "Token " + token}
+    try:
+        response = requests.post(
+            url=URL + "/users/wallets/list",
+            headers=header
+        )
+        response.raise_for_status()
+        if response.status_code == 200:
+            print(f"Your wallets list: \n{response.json()}")
+            open_token.close()
+            # print(f"status code = {response.status_code}")
+    except requests.exceptions.RequestException as error2:
+        print(f"ERROR! \n{error2}")
+
+def wallets_balance(currency):
+    open_token = open("token.txt", "r")
+    token = open_token.read()
+    header = {"Authorization": "Token " + token,
+              "content-type": "application/json"}
+    open_token.close()
+    try:
+        response = requests.post(
+            url=URL + "/users/wallets/balance",
+            headers=header,
+            json={
+                "currency": currency
+            }
+        )
+        response.raise_for_status()
+        if response.status_code == 200:
+            print(f"Your wallet balance: \n{response.json()['balance']} {currency}")
+            # print(response.status_code)
+    except requests.exceptions.RequestException as error2:
+        print(f"ERROR! \n{error2}")
+
 # login("miladazami120@gmail.com", "Sa3257121600")
 # profile()
 # list_of_orders("buy")
 # list_of_trades("btc", "rls")
 # nobitex_statistics("btc", "usdt")
-# OHLC("btcusdt, "D", "1567424381", "1567395581")
+##### OHLC("btcusdt, "D", "1567424381", "1567395581")
 # print(global_statistics())
 # login_attempts()
 # referral_code()
-add_card_number("6037991819562458", "بانک ملی")
-# profile()
+##### add_card_number("5041721011111111", "رسالت")
+##### add_account_number("5041721011111111", "IR111111111111111111111111", "رسالت")
+## profile()
+# limitations()
+# wallets_list()
+# wallets_balance("ltc")
