@@ -285,21 +285,25 @@ def limitations():
             print(f"ERROR! \n{error}")
 
 def wallets_list():
+    # Use this function to see your own list of wallets.
     open_token = open("token.txt", "r")
     token = open_token.read()
     header = {"Authorization": "Token " + token}
+    open_token.close()
     try:
         response = requests.post(
-            url=URL + "/users/wallets/list",
-            headers=header
+            url = URL + "/users/wallets/list",
+            headers = header
         )
         response.raise_for_status()
         if response.status_code == 200:
             print(f"Your wallets list: \n{response.json()}")
-            open_token.close()
             # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error2:
-        print(f"ERROR! \n{error2}")
+    except requests.exceptions.RequestException as error:
+        if response.status_code == 401:
+            print(f"ERROR! \nplease login then try again. \n{error}")
+        else:
+            print(f"ERROR! \n{error}")
 
 def wallets_balance(currency):
     open_token = open("token.txt", "r")
@@ -432,8 +436,8 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
 ### add_card_number("5041721011111111", "رسالت")
 ### add_account_number("5041721011111111", "IR111111111111111111111111", "رسالت")
 ## profile()
-limitations()
-# wallets_list()
+# limitations()
+wallets_list()
 # wallets_balance("ltc")
 # transactions_lits("3630")
 # deposit_withdraw("3630")
