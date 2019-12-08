@@ -359,6 +359,8 @@ def transactions_list(wallet_ID):
             print(f"ERROR! \n{error}")
 
 def deposit_withdraw(wallet_ID):
+    # Use this function to get a list of deposits and withdrawals.
+    # wallet_ID : ID of the wallet you want.
     open_token = open("token.txt", "r")
     token = open_token.read()
     header = {"Authorization": "Token " + token,
@@ -366,9 +368,9 @@ def deposit_withdraw(wallet_ID):
     open_token.close()
     try:
         response = requests.post(
-            url=URL + "/users/wallets/deposits/list",
-            headers=header,
-            json={
+            url = URL + "/users/wallets/deposits/list",
+            headers = header,
+            json = {
                 "wallet": wallet_ID
             }
         )
@@ -376,8 +378,11 @@ def deposit_withdraw(wallet_ID):
         if response.status_code == 200:
             print(f"List of deposits and withdrawals: \n{response.json()}")
             # print(response.status_code)
-    except requests.exceptions.RequestException as error2:
-        print(f"ERROR! \n{error2}")
+    except requests.exceptions.RequestException as error:
+        if response.status_code == 401:
+            print(f"ERROR! \nplease login then try again. \n{error}")
+        else:
+            print(f"ERROR! \n{error}")
 
 def generate_address(wallet_ID):
     open_token = open("token.txt", "r")
@@ -449,7 +454,7 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
 # limitations()
 # wallets_list()
 # wallets_balance("btc")
-transactions_list("18217")
-# deposit_withdraw("3630")
+# transactions_list("18217")
+deposit_withdraw("18217")
 # generate_address("3630")
 # order("buy", "eth", "rls", "5", "20000000")
