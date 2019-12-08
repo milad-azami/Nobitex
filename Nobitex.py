@@ -306,6 +306,8 @@ def wallets_list():
             print(f"ERROR! \n{error}")
 
 def wallets_balance(currency):
+    # Use this function to get your wallet balance.
+    # currency : The wallet you want like "btc" or 'ltc" etc.
     open_token = open("token.txt", "r")
     token = open_token.read()
     header = {"Authorization": "Token " + token,
@@ -313,9 +315,9 @@ def wallets_balance(currency):
     open_token.close()
     try:
         response = requests.post(
-            url=URL + "/users/wallets/balance",
-            headers=header,
-            json={
+            url = URL + "/users/wallets/balance",
+            headers = header,
+            json = {
                 "currency": currency
             }
         )
@@ -323,8 +325,11 @@ def wallets_balance(currency):
         if response.status_code == 200:
             print(f"Your wallet balance: \n{response.json()['balance']} {currency}")
             # print(response.status_code)
-    except requests.exceptions.RequestException as error2:
-        print(f"ERROR! \n{error2}")
+    except requests.exceptions.RequestException as error:
+        if response.status_code == 401:
+            print(f"ERROR! \nplease login then try again. \n{error}")
+        else:
+            print(f"ERROR! \n{error}")
 
 def transactions_lits(wallet_ID):
     wallet_ID = int(wallet_ID)
@@ -437,8 +442,8 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
 ### add_account_number("5041721011111111", "IR111111111111111111111111", "رسالت")
 ## profile()
 # limitations()
-wallets_list()
-# wallets_balance("ltc")
+# wallets_list()
+wallets_balance("btc")
 # transactions_lits("3630")
 # deposit_withdraw("3630")
 # generate_address("3630")
