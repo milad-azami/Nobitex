@@ -264,21 +264,25 @@ def add_account_number(account_number, shaba_number, bank_name):
             print(f"ERROR! \n{error}")
 
 def limitations():
+    # Use this function to see your limitations in NOBITEX crypto exchange.
     open_token = open("token.txt", "r")
     token = open_token.read()
     header = {"Authorization": "Token " + token}
+    open_token.close()
     try:
         response = requests.post(
-            url=URL + "/users/limitations",
-            headers=header
+            url = URL + "/users/limitations",
+            headers = header
         )
         response.raise_for_status()
         if response.status_code == 200:
-            print(f"Your limitaions: \n{response.json()}")
-            open_token.close()
+            print(f"Your limitations according to your authentication: \n{response.json()}")
             # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error2:
-        print(f"ERROR! \n{error2}")
+    except requests.exceptions.RequestException as error:
+        if response.status_code == 401:
+            print(f"ERROR! \nplease login then try again. \n{error}")
+        else:
+            print(f"ERROR! \n{error}")
 
 def wallets_list():
     open_token = open("token.txt", "r")
@@ -428,7 +432,7 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
 ### add_card_number("5041721011111111", "رسالت")
 ### add_account_number("5041721011111111", "IR111111111111111111111111", "رسالت")
 ## profile()
-# limitations()
+limitations()
 # wallets_list()
 # wallets_balance("ltc")
 # transactions_lits("3630")
