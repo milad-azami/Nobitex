@@ -81,6 +81,7 @@ def list_of_trades(srcCurrency, dstCurrency, myTradesOnly = "no"):
     # srcCurrency : Source Currency
     # dstCurrency : Destination Currency
     # myTradesOnly : Show personal trading list ("yes" or "no")
+    # Limitation : 15 requests per minute.
     header = {"content-type": "application/json"}
     try:
         response = requests.post(
@@ -99,8 +100,10 @@ def list_of_trades(srcCurrency, dstCurrency, myTradesOnly = "no"):
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
 def nobitex_statistics(srcCurrency, dstCurrency):
+    # Use this function to get the latest NOBITEX market statistics.
     # srcCurrency : Source Currency
     # dstCurrency : Destination Currency
+    # Limitation : 100 requests per 10 minute.
     header = {"content-type": "application/json"}
     try:
         response = requests.post(
@@ -385,3 +388,22 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
         print(f"ERROR! \n{error2}")
 
 
+# login("miladazami120@gmail.com", "Sa3257121600", "yes")
+# profile()
+# list_of_orders("buy")
+# list_of_trades("btc", "rls")
+nobitex_statistics("btc", "usdt")
+## OHLC("btcusdt, "h", "1567424381", "1567395581")
+# print(global_statistics())
+# login_attempts()
+# referral_code()
+## add_card_number("5041721011111111", "رسالت")
+## add_account_number("5041721011111111", "IR111111111111111111111111", "رسالت")
+## profile()
+# limitations()
+# wallets_list()
+# wallets_balance("ltc")
+# transactions_lits("3630")
+# deposit_withdraw("3630")
+# generate_address("3630")
+# order("buy", "eth", "rls", "5", "20000000")
