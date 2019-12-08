@@ -2,7 +2,9 @@ import requests
 
 URL = "https://testnetapi.nobitex.net"
 
-def login(username, password):
+def login(username, password, remember = "no"):
+    # For long time tokens(30 days), word "yes" must be entered after username and password.
+    # otherwise the program sends word "no" by default and receives four-hours tokens.
     file_save_token = open("token.txt", "w")
     header = {"Content-Type": "application/json"}
     try:
@@ -12,7 +14,7 @@ def login(username, password):
             json={
                 "username": username,
                 "password": password,
-                "remeber": "yes"
+                "remeber": remember
                 }
         )
         # print(response.status_code)
@@ -23,13 +25,13 @@ def login(username, password):
             file_save_token.close()
             print(f"Your Token: \n{login_token}")
             # print(f"status code = {response.status_code}")
-    except requests.exceptions.HTTPError as error1:
+    except requests.exceptions.RequestException as error1:
         if response.status_code == 403:
             print(f"Your password or username isn't correct. \n{error1}")
+        elif response.status_code == 429:
+            print(f"You need to log in with Iran's IP. \n{error1}")
         else:
             print(f"ERROR! \n{error1}")
-    except requests.exceptions.RequestException as error2:
-        print(f"ERROR! \n{error2}")
 
 def profile():
     open_token = open("token.txt", "r")
@@ -378,24 +380,3 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
 
-def
-
-# login("miladazami120@gmail.com", "Sa3257121600")
-# profile()
-# list_of_orders("buy")
-# list_of_trades("btc", "rls")
-# nobitex_statistics("btc", "usdt")
-## OHLC("btcusdt, "h", "1567424381", "1567395581")
-# print(global_statistics())
-# login_attempts()
-# referral_code()
-## add_card_number("5041721011111111", "رسالت")
-## add_account_number("5041721011111111", "IR111111111111111111111111", "رسالت")
-## profile()
-# limitations()
-# wallets_list()
-# wallets_balance("ltc")
-# transactions_lits("3630")
-# deposit_withdraw("3630")
-# generate_address("3630")
-# order("buy", "eth", "rls", "5", "20000000")
