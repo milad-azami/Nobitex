@@ -204,6 +204,9 @@ def referral_code():
             print(f"ERROR! \n{error}")
 
 def add_card_number(card_number, bank_name):
+    # Use this function to add bank card number.
+    # card_number : Your card number.
+    # bank_name : Name of the bank.
     open_token = open("token.txt", "r")
     token = open_token.read()
     header = {"Authorization": "Token " + token,
@@ -221,9 +224,12 @@ def add_card_number(card_number, bank_name):
         response.raise_for_status()
         if response.status_code == 200:
             print(f"Completed. \n{response.json()}")
-            print(response.status_code)
-    except requests.exceptions.RequestException as error2:
-        print(f"ERROR! \n{error2}")
+            # print(response.status_code)
+    except requests.exceptions.RequestException as error:
+        if response.status_code == 401:
+            print(f"ERROR! \nplease login then try again. \n{error}")
+        else:
+            print(f"ERROR! \n{error}")
 
 def add_account_number(account_number, shaba_number, bank_name):
     open_token = open("token.txt", "r")
@@ -410,7 +416,7 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
 # print(global_statistics())
 # login_attempts()
 # referral_code()
-## add_card_number("5041721011111111", "رسالت")
+add_card_number("5041721011111111", "رسالت")
 ## add_account_number("5041721011111111", "IR111111111111111111111111", "رسالت")
 ## profile()
 # limitations()
