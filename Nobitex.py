@@ -158,9 +158,11 @@ def global_statistics():
         print(f"ERROR! \n{error2}")
 
 def login_attempts():
+    # Use this function to get your login history
     open_token = open("token.txt", "r")
     token = open_token.read()
     header = {"Authorization": "Token " + token}
+    open_token.close()
     try:
         response = requests.post(
             url=URL + "/users/login-attempts",
@@ -169,10 +171,12 @@ def login_attempts():
         response.raise_for_status()
         if response.status_code == 200:
             print(f"Your login history: \n{response.json()}")
-            open_token.close()
             # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error2:
-        print(f"ERROR! \n{error2}")
+    except requests.exceptions.RequestException as error:
+        if response.status_code == 401:
+            print(f"ERROR! \nplease login then try again. \n{error}")
+        else:
+            print(f"ERROR! \n{error}")
 
 def referral_code():
     open_token = open("token.txt", "r")
@@ -389,14 +393,14 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
         print(f"ERROR! \n{error2}")
 
 
-# login("miladazami120@gmail.com", "Sa3257121600", "yes")
+login("miladazami120@gmail.com", "Sa3257121600", "yes")
 # profile()
 # list_of_orders("buy")
 # list_of_trades("btc", "rls")
 # nobitex_statistics("btc", "usdt")
 ### OHLC("BTCIR", "D", "1562120967", "1562230967")
-global_statistics()
-# login_attempts()
+# global_statistics()
+login_attempts()
 # referral_code()
 ## add_card_number("5041721011111111", "رسالت")
 ## add_account_number("5041721011111111", "IR111111111111111111111111", "رسالت")
