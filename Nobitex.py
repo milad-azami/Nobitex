@@ -412,12 +412,15 @@ def generate_address(wallet_ID):
             print(f"ERROR! \n{error}")
 
 def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
+    # Use this function to order.
     # type : "buy" or "sell"
     # srcCurrency : Source Currency
     # dstCurrency : Destination Currency
-    # amount = The amount you want to buy
-    # price = Price to buy
+    # amount = The amount you want to buy.
+    # price = Price to buy.
     # execution = "limit" or "market"
+    # For quick order use word "market" for execution.
+    # Limitation : 100 requests per 10 minutes.
     price = int(price)
     open_token = open("token.txt", "r")
     token = open_token.read()
@@ -426,9 +429,9 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
     open_token.close()
     try:
         response = requests.post(
-            url=URL + "/market/orders/add",
-            headers=header,
-            json={
+            url = URL + "/market/orders/add",
+            headers = header,
+            json = {
                 "type": type,
                 "execution": execution,
                 "srcCurrency": srcCurrency,
@@ -441,26 +444,8 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
         if response.status_code == 200:
             print(response.json())
             # print(response.status_code)
-    except requests.exceptions.RequestException as error2:
-        print(f"ERROR! \n{error2}")
-
-
-# login("miladazami120@gmail.com", "Sa3257121600", "yes")
-# profile()
-# list_of_orders("buy")
-# list_of_trades("btc", "rls")
-# nobitex_statistics("btc", "usdt")
-## OHLC("btcusdt, "h", "1567424381", "1567395581")
-# print(global_statistics())
-# login_attempts()
-# referral_code()
-### add_card_number("5041721011111111", "رسالت")
-### add_account_number("5041721011111111", "IR111111111111111111111111", "رسالت")
-## profile()
-# limitations()
-# wallets_list()
-# wallets_balance("btc")
-# transactions_list("18217")
-# deposit_withdraw("18217")
-generate_address("18217")
-# order("buy", "eth", "rls", "5", "20000000")
+    except requests.exceptions.RequestException as error:
+        if response.status_code == 401:
+            print(f"ERROR! \nplease login then try again. \n{error}")
+        else:
+            print(f"ERROR! \n{error}")
