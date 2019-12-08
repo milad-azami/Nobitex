@@ -331,7 +331,9 @@ def wallets_balance(currency):
         else:
             print(f"ERROR! \n{error}")
 
-def transactions_lits(wallet_ID):
+def transactions_list(wallet_ID):
+    # Use this function to see your transactions history.
+    # wallet_ID : ID of the wallet you want.
     wallet_ID = int(wallet_ID)
     open_token = open("token.txt", "r")
     token = open_token.read()
@@ -340,9 +342,9 @@ def transactions_lits(wallet_ID):
     open_token.close()
     try:
         response = requests.post(
-            url=URL + "/users/wallets/transactions/list",
-            headers=header,
-            json={
+            url = URL + "/users/wallets/transactions/list",
+            headers = header,
+            json = {
                 "wallet": wallet_ID
             }
         )
@@ -350,8 +352,11 @@ def transactions_lits(wallet_ID):
         if response.status_code == 200:
             print(f"Your transactions list: \n{response.json()}")
             # print(response.status_code)
-    except requests.exceptions.RequestException as error2:
-        print(f"ERROR! \n{error2}")
+    except requests.exceptions.RequestException as error:
+        if response.status_code == 401:
+            print(f"ERROR! \nplease login then try again. \n{error}")
+        else:
+            print(f"ERROR! \n{error}")
 
 def deposit_withdraw(wallet_ID):
     open_token = open("token.txt", "r")
@@ -443,8 +448,8 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
 ## profile()
 # limitations()
 # wallets_list()
-wallets_balance("btc")
-# transactions_lits("3630")
+# wallets_balance("btc")
+transactions_list("18217")
 # deposit_withdraw("3630")
 # generate_address("3630")
 # order("buy", "eth", "rls", "5", "20000000")
