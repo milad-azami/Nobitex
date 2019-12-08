@@ -121,10 +121,10 @@ def nobitex_statistics(srcCurrency, dstCurrency):
         print(f"ERROR! \n{error2}")
 
 def OHLC(symbol, resolution, from_, to):
-    #symbol : جفت ارز
-    #resolution : Candle Time Frame
-    #from_ : The Beginning Time of The Interval
-    #to : The Ending Time of The Interval
+    # symbol : جفت ارز
+    # resolution : Candle Time Frame
+    # from_ : The Beginning Time of The Interval
+    # to : The Ending Time of The Interval
     from_ = int(from_)
     to = int(to)
     header = {"content-type": "application/json"}
@@ -133,10 +133,10 @@ def OHLC(symbol, resolution, from_, to):
             url = URL + "/market/udf/history",
             headers = header,
             json = {
-                "symbol" : symbol,
-                "resolution" : resolution,
-                "from" : from_,
-                "to" : to
+                "symbol": symbol,
+                "resolution": resolution,
+                "from": from_,
+                "to": to
             }
         )
         response.raise_for_status()
@@ -147,12 +147,13 @@ def OHLC(symbol, resolution, from_, to):
         print(f"ERROR! \n{error2}")
 
 def global_statistics():
-    #Statistics of Binance and Kraken
+    # Use this function to get the statistics of Binance and Kraken.
+    # Limitation : 100 requests per 10 minute.
     try:
         response = requests.post(URL + "/market/global-stats")
         response.raise_for_status()
         if response.status_code == 200:
-            print(response.json())
+            print(f"World market statistics: \n{response.json()}")
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
 
@@ -392,9 +393,9 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
 # profile()
 # list_of_orders("buy")
 # list_of_trades("btc", "rls")
-nobitex_statistics("btc", "usdt")
-## OHLC("btcusdt, "h", "1567424381", "1567395581")
-# print(global_statistics())
+# nobitex_statistics("btc", "usdt")
+### OHLC("BTCIR", "D", "1562120967", "1562230967")
+global_statistics()
 # login_attempts()
 # referral_code()
 ## add_card_number("5041721011111111", "رسالت")
