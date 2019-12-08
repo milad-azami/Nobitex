@@ -9,9 +9,9 @@ def login(username, password, remember = "no"):
     header = {"Content-Type": "application/json"}
     try:
         response = requests.post(
-            url=URL + '/auth/login/',
-            headers=header,
-            json={
+            url = URL + '/auth/login/',
+            headers = header,
+            json = {
                 "username": username,
                 "password": password,
                 "remeber": remember
@@ -25,13 +25,13 @@ def login(username, password, remember = "no"):
             file_save_token.close()
             print(f"Your Token: \n{login_token}")
             # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error1:
+    except requests.exceptions.RequestException as error:
         if response.status_code == 403:
-            print(f"Your password or username isn't correct. \n{error1}")
+            print(f"Your password or username isn't correct. \n{error}")
         elif response.status_code == 429:
-            print(f"You need to log in with Iran's IP. \n{error1}")
+            print(f"You need to log in with Iran's IP. \n{error}")
         else:
-            print(f"ERROR! \n{error1}")
+            print(f"ERROR! \n{error}")
 
 def profile():
     open_token = open("token.txt", "r")
@@ -50,28 +50,31 @@ def profile():
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
 
-def list_of_orders(type = "sell", srcCurrency = None, dstCurrency = "usdt"):
-    #type : "buy" or "sell"
-    #srcCurrency : Source Currency
-    #dstCurrency : Destination Currency
-    header = {"content-type" : "application/json"}
+def list_of_orders(type, srcCurrency = None, dstCurrency = "usdt", order = "-price"):
+    # Use this function to get the list of orders.
+    # The program shows the price from high to low by default.
+    # For showing from low to high, word " price" should be entered for order variable.
+    # type : "buy" or "sell"
+    # srcCurrency : Source Currency
+    # dstCurrency : Destination Currency
+    header = {"content-type": "application/json/"}
     try:
         response = requests.post(
             url = URL + "/market/orders/list",
             headers = header,
             json = {
-                "oreder" : "-price",
-                "type" : type,
-                "srcCurrency" : srcCurrency,
-                "dstCurrency" : dstCurrency
+                "order": order,
+                "type": type,
+                "srcCurrency": srcCurrency,
+                "dstCurrency": dstCurrency
             }
         )
         response.raise_for_status()
         if response.status_code == 200:
-            print(f"List of Order: \n{response.json()}")
+            print(f"List of Orders: \n{response.json()}")
             # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error2:
-        print(f"ERROR! \n{error2}")
+    except requests.exceptions.RequestException as error:
+        print(f"ERROR! \n{error}")
         
 def list_of_trades(srcCurrency, dstCurrency, myTradesOnly = "no"):
     # srcCurrency : Source Currency
@@ -380,3 +383,4 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
 
+list_of_orders("buy")
