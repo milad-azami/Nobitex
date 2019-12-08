@@ -77,18 +77,19 @@ def list_of_orders(type, srcCurrency = None, dstCurrency = "usdt", order = "-pri
         print(f"ERROR! \n{error}")
         
 def list_of_trades(srcCurrency, dstCurrency, myTradesOnly = "no"):
+    # Use this function to get the list of trades.
     # srcCurrency : Source Currency
     # dstCurrency : Destination Currency
-    #myTradesOnly : Show personal trading list ("yes" or "no")
-    header = {"content-type" : "application/json"}
+    # myTradesOnly : Show personal trading list ("yes" or "no")
+    header = {"content-type": "application/json"}
     try:
         response = requests.post(
             url = URL + "/market/trades/list",
             headers = header,
             json = {
-                "srcCurrency" : srcCurrency,
-                "dstCurrency" : dstCurrency,
-                "myTradesOnly" : myTradesOnly
+                "srcCurrency": srcCurrency,
+                "dstCurrency": dstCurrency,
+                "myTradesOnly": myTradesOnly
             }
         )
         response.raise_for_status()
@@ -383,4 +384,4 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
     except requests.exceptions.RequestException as error2:
         print(f"ERROR! \n{error2}")
 
-list_of_orders("buy")
+
