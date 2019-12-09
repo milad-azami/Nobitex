@@ -454,7 +454,7 @@ def order_status(order_ID):
     # Use this function to get order status.
     # order_ID : Order ID
     # Limitation : 60 requests per minute.
-    price = int(order_ID)
+    order_ID = int(order_ID)
     open_token = open("token.txt", "r")
     token = open_token.read()
     header = {"Authorization": "token " + token,
@@ -477,4 +477,35 @@ def order_status(order_ID):
             print(f"ERROR! \nplease login then try again. \n{error}")
         else:
             print(f"ERROR! \n{error}")
+
+def update_status(order_ID, status):
+    # Use this function to change order status.
+    # order_ID : Order ID
+    # status : "new" or "active" or "cancel
+    # Limitation : 100 requests per 10 minutes.
+    price = int(order_ID)
+    open_token = open("token.txt", "r")
+    token = open_token.read()
+    header = {"Authorization": "token " + token,
+              "content-type": "application/json"}
+    open_token.close()
+    try:
+        response = requests.post(
+            url=URL + "/market/orders/add",
+            headers=header,
+            json={
+                "order": order_ID,
+                "status": status
+            }
+        )
+        response.raise_for_status()
+        if response.status_code == 200:
+            print(f"Order status changed. \n{response.json()}")
+            # print(response.status_code)
+    except requests.exceptions.RequestException as error:
+        if response.status_code == 401:
+            print(f"ERROR! \nplease login then try again. \n{error}")
+        else:
+            print(f"ERROR! \n{error}")
+
 
