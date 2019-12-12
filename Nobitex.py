@@ -2,7 +2,7 @@ import requests
 
 URL = "https://testnetapi.nobitex.net"
 
-def request(json, path):
+def request(json, path, token=None):
     header = {"Content-Type": "application/json"}
     try:
         response = requests.post(
