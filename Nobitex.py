@@ -133,7 +133,7 @@ def OHLC(symbol, resolution, from_, to):
     to = int(to)
     header = {"content-type": "application/json"}
     try:
-        response = requests.get(
+        response = requests.post(
             url = URL + "/market/udf/history",
             headers = header,
             json = {
@@ -442,7 +442,7 @@ def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
         )
         response.raise_for_status()
         if response.status_code == 200:
-            print(response.json())
+            print(f"Completed. \n{response.json()}")
             # print(response.status_code)
     except requests.exceptions.RequestException as error:
         if response.status_code == 401:
@@ -483,7 +483,7 @@ def update_status(order_ID, status):
     # order_ID : Order ID
     # status : "new" or "active" or "cancel
     # Limitation : 100 requests per 10 minutes.
-    price = int(order_ID)
+    order_ID = int(order_ID)
     open_token = open("token.txt", "r")
     token = open_token.read()
     header = {"Authorization": "token " + token,
