@@ -2,36 +2,42 @@ import requests
 
 URL = "https://testnetapi.nobitex.net"
 
-def login(username, password, remember = "no"):
-    # For long time tokens(30 days), word "yes" must be entered after username and password.
-    # otherwise the program sends word "no" by default and receives four-hours tokens.
-    file_save_token = open("token.txt", "w")
+def request(json, path):
     header = {"Content-Type": "application/json"}
     try:
         response = requests.post(
-            url = URL + '/auth/login/',
-            headers = header,
-            json = {
-                "username": username,
-                "password": password,
-                "remeber": remember
-                }
+            url=URL + path,
+            headers=header,
+            json=json
         )
-        # print(response.status_code)
-        response.raise_for_status()
-        if response.status_code == 200:
-            login_token = response.json()["key"]
-            file_save_token.write(login_token)
-            file_save_token.close()
-            print(f"Your Token: \n{login_token}")
-            # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error:
-        if response.status_code == 403:
-            print(f"Your password or username isn't correct. \n{error}")
-        elif response.status_code == 429:
-            print(f"You need to log in with Iran's IP. \n{error}")
+        return True, response
+    except Exception as e:
+        error = 'Exception: {}'.format(e)
+        return False, error
+
+def login(username, password, remember = False):
+    # return status, value: (success and token ) or (failed and error)
+    # For long time tokens(30 days), remember=True  must be entered after username and password.
+    # otherwise the program sends remember=False by default and receives four-hours tokens.
+    remember = 'yes' if remember else 'no'
+    json = {
+        'username': username,
+        'password': password,
+        'remeber': remember
+    }
+    status_response, response = request(json=json, path='/auth/login/')
+    if status_response:
+        if response.status_code == 200 and response.json()['key']:
+            return 'success', response.json()['key']
+        if response.status_code == 429:
+            error = 'You need to log in with Iran\'s IP.'
         else:
-            print(f"ERROR! \n{error}")
+            error = response.json()['non_field_errors']
+        return 'failed', error
+    else:
+        return 'failed', response
+
+
 
 def profile():
     # Use this function to see your profile and personal information.
