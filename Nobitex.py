@@ -93,31 +93,32 @@ def profile(token):
         return 'failed', response.json()
 
 
-def list_of_orders(type, srcCurrency = None, dstCurrency = "usdt", order = "-price"):
-    # Use this function to get the list of orders.
+def list_of_orders(type_=None, src_currency=None, dst_currency='usdt', order_=True):
+    # Return list of orders.
     # The program shows the price from high to low by default.
-    # For showing from low to high, word " price" should be entered for order variable.
-    # type : "buy" or "sell"
-    # srcCurrency : Source Currency
-    # dstCurrency : Destination Currency
-    header = {"content-type": "application/json/"}
-    try:
-        response = requests.post(
-            url = URL + "/market/orders/list",
-            headers = header,
-            json = {
-                "order": order,
-                "type": type,
-                "srcCurrency": srcCurrency,
-                "dstCurrency": dstCurrency
-            }
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"List of Orders: \n{response.json()}")
-            # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error:
-        print(f"ERROR! \n{error}")
+    # For showing from low to high, word " price" should be entered for <order_> variable.
+    # <type_> : "buy" or "sell"
+    # <src_currency> : Source Currency
+    # <dst_currency> : Destination Currency
+    order_ = '-price' if order_ else 'price'
+    json = {
+        "order": order_,
+        "type": type_,
+        "srcCurrency": src_currency,
+        "dstCurrency": dst_currency
+    }
+    status_response, response = request(path='/market/orders/list', json=json)
+    if status_response:
+        if response.status_code == 200 and response.json()['orders']:
+            order_ = response.json()['orders']
+            return f'ok \nOrders: \n{order_}'
+        else:
+            error_1 = response.json()['code']
+            error_2 = response.json()['message']
+            return f'failed \n{error_1} \n{error_2}'
+    else:
+        return f'failed \n{response.json()}'
+    
 
 def list_of_trades(srcCurrency, dstCurrency, myTradesOnly = "no"):
     # Use this function to get the list of trades.
@@ -580,4 +581,3 @@ def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
         else:
             print(f"ERROR! \n{error}")
 
-print(login('miladazami120@gmail.com', 'Sa3257121600', True))
