@@ -1,19 +1,57 @@
 import requests
 
+
 URL = "https://testnetapi.nobitex.net"
 
-def request(json, path, token=None):
-    header = {"Content-Type": "application/json"}
-    try:
-        response = requests.post(
-            url=URL + path,
-            headers=header,
-            json=json
-        )
-        return True, response
-    except Exception as e:
-        error = 'Exception: {}'.format(e)
-        return False, error
+
+def request(path, json=None, token=None):
+    if token:
+        header = {"Authorization": "Token " + token,
+                  "content-type": "application/json"}
+        if json:
+            try:
+                response = requests.post(
+                    url=URL + path,
+                    headers=header,
+                    json=json
+                )
+                return True, response
+            except Exception as e:
+                error = f'Exception: \n{e}'
+                return False, error
+        else:
+            try:
+                response = requests.post(
+                    url=URL + path,
+                    headers=header
+                )
+                return True, response
+            except Exception as e:
+                error = f'Exception: \n{e}'
+                return False, error
+    else:
+        header = {"content-type": "application/json"}
+        if json:
+            try:
+                response = requests.post(
+                    url=URL + path,
+                    headers=header,
+                    json=json
+                )
+                return True, response
+            except Exception as e:
+                error = f'Exception: \n{e}'
+                return False, error
+        else:
+            try:
+                response = requests.post(
+                    url=URL + path,
+                    headers=header
+                )
+                return True, response
+            except Exception as e:
+                error = f'Exception: \n{e}'
+                return False, error
 
 def login(username, password, remember = False):
     # return status, value: (success and token ) or (failed and error)
@@ -29,14 +67,13 @@ def login(username, password, remember = False):
     if status_response:
         if response.status_code == 200 and response.json()['key']:
             return 'success', response.json()['key']
-        if response.status_code == 429:
+        elif response.status_code == 429:
             error = 'You need to log in with Iran\'s IP.'
         else:
             error = response.json()['non_field_errors']
         return 'failed', error
     else:
         return 'failed', response
-
 
 
 def profile():
