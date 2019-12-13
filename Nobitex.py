@@ -82,26 +82,19 @@ def login(username, password, remember=False):
         return 'failed', response.json()
 
 
-def profile():
-    # Use this function to see your profile and personal information.
-    open_token = open("token.txt", "r")
-    token = open_token.read()
-    header = {"Authorization": "Token " + token}
-    open_token.close()
-    try:
-        response = requests.post(
-            url=URL + "/users/profile",
-            headers=header
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"Profile: \n{response.json()}")
-            # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error:
-        if response.status_code == 401:
-            print(f"ERROR! \nplease login then try again. \n{error}")
+def profile(token):
+    # Return profile and personal information.
+    status_response, response = request(path='/users/profile', token=token)
+    if status_response:
+        if response.status_code == 200 and response.json()['profile']:
+            profile_ = response.json()['profile']
+            return f'ok \nProfile: \n{profile_}'
         else:
-            print(f"ERROR! \n{error}")
+            error = response.json()['detail']
+            return f'Error: \n{error}'
+    else:
+        return 'failed', response.json()
+
 
 def list_of_orders(type, srcCurrency = None, dstCurrency = "usdt", order = "-price"):
     # Use this function to get the list of orders.
@@ -589,6 +582,4 @@ def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
             print(f"ERROR! \nplease login then try again. \n{error}")
         else:
             print(f"ERROR! \n{error}")
-
-print(login('miladazami120@gmail.com', 'Sa3257121600', True))
 
