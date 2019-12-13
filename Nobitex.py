@@ -53,7 +53,8 @@ def request(path, json=None, token=None):
                 error = f'Exception: \n{e}'
                 return False, error
 
-def login(username, password, remember = False):
+
+def login(username, password, remember=False):
     # return status, value: (success and token ) or (failed and error)
     # For long time tokens(30 days), remember=True  must be entered after username and password.
     # otherwise the program sends remember=False by default and receives four-hours tokens.
@@ -61,7 +62,7 @@ def login(username, password, remember = False):
     json = {
         'username': username,
         'password': password,
-        'remeber': remember
+        'remember': remember
     }
     status_response, response = request(json=json, path='/auth/login/')
     if status_response:
@@ -69,11 +70,12 @@ def login(username, password, remember = False):
             return 'success', response.json()['key']
         elif response.status_code == 429:
             error = 'You need to log in with Iran\'s IP.'
+            return error
         else:
             error = response.json()['non_field_errors']
-        return 'failed', error
+            return 'failed', error
     else:
-        return 'failed', response
+        return 'failed', response.json()
 
 
 def profile():
@@ -122,7 +124,7 @@ def list_of_orders(type, srcCurrency = None, dstCurrency = "usdt", order = "-pri
             # print(f"status code = {response.status_code}")
     except requests.exceptions.RequestException as error:
         print(f"ERROR! \n{error}")
-        
+
 def list_of_trades(srcCurrency, dstCurrency, myTradesOnly = "no"):
     # Use this function to get the list of trades.
     # srcCurrency : Source Currency
@@ -583,5 +585,4 @@ def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
             print(f"ERROR! \nplease login then try again. \n{error}")
         else:
             print(f"ERROR! \n{error}")
-
 
