@@ -68,18 +68,15 @@ def login(username, password, remember=False):
     if status_response:
         if response.status_code == 200 and response.json()['key']:
             token = response.json()['key']
-            file = open('NobitexToken.txt', 'w')
-            file.write(token)
-            file.close()
-            return f'Success \nToken: {token} \nYour token stored in NobitexToken.txt file.'
+            return f'Success \nToken: {token} \nYou need this token for using other function.'
         elif response.status_code == 429:
             error = 'You need to log in with Iran\'s IP.'
             return error
         else:
             error = response.json()['non_field_errors']
-            return 'failed', error
+            return f'failed \n{error}'
     else:
-        return 'failed', response.json()
+        return f'failed \n{response.json()}'
 
 
 def profile(token):
@@ -583,3 +580,4 @@ def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
         else:
             print(f"ERROR! \n{error}")
 
+print(login('miladazami120@gmail.com', 'Sa3257121600', True))
