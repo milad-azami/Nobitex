@@ -166,32 +166,6 @@ def nobitex_statistics(src_currency=None, dst_currency=None):
         return f'failed \n{response.json()}'
 
 
-def OHLC(symbol, resolution, from_, to):
-    # symbol : جفت ارز
-    # resolution : Candle Time Frame
-    # from_ : The Beginning Time of The Interval
-    # to : The Ending Time of The Interval
-    from_ = int(from_)
-    to = int(to)
-    header = {"content-type": "application/json"}
-    try:
-        response = requests.post(
-            url = URL + "/market/udf/history",
-            headers = header,
-            json = {
-                "symbol": symbol,
-                "resolution": resolution,
-                "from": from_,
-                "to": to
-            }
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            # print(response.status_code)
-            print(response.json())
-    except requests.exceptions.RequestException as error:
-        print(f"ERROR! \n{error}")
-
 def global_statistics():
     # Use this function to get the statistics of Binance and Kraken.
     # Limitation : 100 requests per 10 minute.
@@ -582,5 +556,3 @@ def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
             print(f"ERROR! \nplease login then try again. \n{error}")
         else:
             print(f"ERROR! \n{error}")
-
-print(nobitex_statistics("btc", "usdt"))
