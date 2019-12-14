@@ -166,16 +166,17 @@ def nobitex_statistics(src_currency=None, dst_currency=None):
         return f'failed \n{response.json()}'
 
 
-def global_statistics():
-    # Use this function to get the statistics of Binance and Kraken.
+def global_statistics(i=None):
+    # Return the statistics of Binance and Kraken.
     # Limitation : 100 requests per 10 minute.
-    try:
-        response = requests.post(URL + "/market/global-stats")
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"World market statistics: \n{response.json()}")
-    except requests.exceptions.RequestException as error:
-        print(f"ERROR! \n{error}")
+    status_response, response = request(path='/market/global-stats')
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == 'ok':
+            market = response.json()['markets']
+            return f'ok \nMarkets: \n{market}'
+    else:
+        return f'failed \n{response.json()}'
+
 
 def login_attempts():
     # Use this function to get your login history
@@ -556,3 +557,4 @@ def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
             print(f"ERROR! \nplease login then try again. \n{error}")
         else:
             print(f"ERROR! \n{error}")
+
