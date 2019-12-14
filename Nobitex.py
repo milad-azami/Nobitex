@@ -120,29 +120,30 @@ def list_of_orders(type_=None, src_currency=None, dst_currency='usdt', order_=Tr
         return f'failed \n{response.json()}'
 
 
-def list_of_trades(srcCurrency, dstCurrency, myTradesOnly = "no"):
-    # Use this function to get the list of trades.
-    # srcCurrency : Source Currency
-    # dstCurrency : Destination Currency
-    # myTradesOnly : Show personal trading list ("yes" or "no")
+def list_of_trades(src_currency=None, dst_currency=None, my_trades_only=True):
+    # Return list of trades.
+    # src_currency : Source Currency
+    # dst_currency : Destination Currency
+    # my_trades_only : Show personal trading list (True or False)
     # Limitation : 15 requests per minute.
-    header = {"content-type": "application/json"}
-    try:
-        response = requests.post(
-            url = URL + "/market/trades/list",
-            headers = header,
-            json = {
-                "srcCurrency": srcCurrency,
-                "dstCurrency": dstCurrency,
-                "myTradesOnly": myTradesOnly
-            }
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"List of Trades: \n{response.json()}")
-            # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error:
-        print(f"ERROR! \n{error}")
+    my_trades_only = 'yes' if my_trades_only else 'no'
+    json = {
+        "srcCurrency": src_currency,
+        "dstCurrency": dst_currency,
+        "myTradesOnly": my_trades_only
+    }
+    status_response, response = request(path='/market/trades/list', json=json)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == 'ok':
+            trade = response.json()['trades']
+            return f'ok \nTrades: \n{trade}'
+        else:
+            error = response.json()['message']
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
+
+
 def nobitex_statistics(srcCurrency, dstCurrency):
     # Use this function to get the latest NOBITEX market statistics.
     # srcCurrency : Source Currency
@@ -581,3 +582,4 @@ def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
         else:
             print(f"ERROR! \n{error}")
 
+print(list_of_trades())
