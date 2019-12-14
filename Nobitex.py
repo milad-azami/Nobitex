@@ -79,7 +79,7 @@ def login(username, password, remember=False):
         return f'failed \n{response.json()}'
 
 
-def profile(token):
+def profile(token=None):
     # Return profile and personal information.
     status_response, response = request(path='/users/profile', token=token)
     if status_response:
@@ -118,7 +118,7 @@ def list_of_orders(type_=None, src_currency=None, dst_currency='usdt', order_=Tr
             return f'failed \n{error_1} \n{error_2}'
     else:
         return f'failed \n{response.json()}'
-    
+
 
 def list_of_trades(srcCurrency, dstCurrency, myTradesOnly = "no"):
     # Use this function to get the list of trades.
