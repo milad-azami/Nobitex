@@ -192,26 +192,19 @@ def login_attempts(token=None):
         return f'failed \n{response.json()}'
 
 
-def referral_code():
-    # Use this function to get referral code.
-    open_token = open("token.txt", "r")
-    token = open_token.read()
-    header = {"Authorization": "Token " + token}
-    open_token.close()
-    try:
-        response = requests.post(
-            url = URL + "/users/get-referral-code",
-            headers = header
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"Your referral code: \n{response.json()['referralCode']}")
-            # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error:
-        if response.status_code == 401:
-            print(f"ERROR! \nplease login then try again. \n{error}")
+def referral_code(token=None):
+    # Return referral code.
+    status_response, response = request(path='/users/get-referral-code', token=token)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == 'ok':
+            referral = response.json()['referralCode']
+            return f'ok \nReferral Code: \n{referral}'
         else:
-            print(f"ERROR! \n{error}")
+            error = response.json()['detail']
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
+
 
 def add_card_number(card_number, bank_name):
     # Use this function to add bank card number.
