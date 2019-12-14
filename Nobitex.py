@@ -144,26 +144,27 @@ def list_of_trades(src_currency=None, dst_currency=None, my_trades_only=True):
         return f'failed \n{response.json()}'
 
 
-def nobitex_statistics(srcCurrency, dstCurrency):
-    # Use this function to get the latest NOBITEX market statistics.
-    # srcCurrency : Source Currency
-    # dstCurrency : Destination Currency
+def nobitex_statistics(src_currency=None, dst_currency=None):
+    # Return the latest NOBITEX market statistics.
+    # src_currency : Source Currency
+    # dst_currency : Destination Currency
     # Limitation : 100 requests per 10 minute.
-    header = {"content-type": "application/json"}
-    try:
-        response = requests.post(
-            url = URL + "/market/stats",
-            headers = header,
-            json = {
-                "srcCurrency": srcCurrency,
-                "dstCurrency": dstCurrency
-            }
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"Nobitex Market Statistics: \n{response.json()}")
-    except requests.exceptions.RequestException as error:
-        print(f"ERROR! \n{error}")
+    json = {
+        "srcCurrency": src_currency,
+        "dstCurrency": dst_currency
+    }
+    status_response, response = request(path='/market/stats', json=json)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == 'ok':
+            stats_ = response.json()['stats']
+            global_ = response.json()['global']
+            return f'ok \nNobitex Statistics: \n{stats_} \nGlobal: \n{global_}'
+        else:
+            error = response.json()['message']
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
+
 
 def OHLC(symbol, resolution, from_, to):
     # symbol : جفت ارز
@@ -582,4 +583,4 @@ def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
         else:
             print(f"ERROR! \n{error}")
 
-print(list_of_trades())
+print(nobitex_statistics("btc", "usdt"))
