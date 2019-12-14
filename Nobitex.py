@@ -178,26 +178,19 @@ def global_statistics(i=None):
         return f'failed \n{response.json()}'
 
 
-def login_attempts():
-    # Use this function to get your login history
-    open_token = open("token.txt", "r")
-    token = open_token.read()
-    header = {"Authorization": "Token " + token}
-    open_token.close()
-    try:
-        response = requests.post(
-            url=URL + "/users/login-attempts",
-            headers = header
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"Your login history: \n{response.json()}")
-            # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error:
-        if response.status_code == 401:
-            print(f"ERROR! \nplease login then try again. \n{error}")
+def login_attempts(token=None):
+    # Return login history
+    status_response, response = request(path='/users/login-attempts', token=token)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == 'ok':
+            attempt = response.json()['attempts']
+            return f'ok \nLogin Attempts: \n{attempt}'
         else:
-            print(f"ERROR! \n{error}")
+            error = response.json()['detail']
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
+
 
 def referral_code():
     # Use this function to get referral code.
