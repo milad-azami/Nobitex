@@ -221,35 +221,25 @@ def limitations(token=None):
         return f'failed \n{response.json()}'
 
 
-def wallets_list():
-    # Use this function to see your own list of wallets.
-    open_token = open("token.txt", "r")
-    token = open_token.read()
-    header = {"Authorization": "Token " + token}
-    open_token.close()
-    try:
-        response = requests.post(
-            url = URL + "/users/wallets/list",
-            headers = header
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"Your wallets list: \n{response.json()}")
-            # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error:
-        if response.status_code == 401:
-            print(f"ERROR! \nplease login then try again. \n{error}")
+def wallets_list(token=None):
+    # Return your own list of wallets.
+    status_response, response = request(path='/users/wallets/list', token=token)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == "ok":
+            wallet = response.json()['wallets']
+            return f'ok \nWallets: \n{wallet}'
         else:
-            print(f"ERROR! \n{error}")
+            error = response.json()['detail']
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
 
-def wallets_balance(currency):
+
+def wallets_balance(currency, token=None):
     # Use this function to get your wallet balance.
     # currency : The wallet you want like "btc" or 'ltc" etc.
-    open_token = open("token.txt", "r")
-    token = open_token.read()
     header = {"Authorization": "Token " + token,
               "content-type": "application/json"}
-    open_token.close()
     try:
         response = requests.post(
             url = URL + "/users/wallets/balance",
@@ -260,13 +250,10 @@ def wallets_balance(currency):
         )
         response.raise_for_status()
         if response.status_code == 200:
-            print(f"Your wallet balance: \n{response.json()['balance']} {currency}")
+            print(response.json())
             # print(response.status_code)
     except requests.exceptions.RequestException as error:
-        if response.status_code == 401:
-            print(f"ERROR! \nplease login then try again. \n{error}")
-        else:
-            print(f"ERROR! \n{error}")
+        print(response.json())
 
 def transactions_list(wallet_ID):
     # Use this function to see your transactions history.
@@ -478,3 +465,4 @@ def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
         else:
             print(f"ERROR! \n{error}")
 
+wallets_balance("btc", 'eeaa1200a7db1cdd42c2a7399054c1a38db3e36e')
