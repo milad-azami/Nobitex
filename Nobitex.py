@@ -312,44 +312,37 @@ def generate_address(wallet_id=None, token=None):
         return f'failed \n{response.json()}'
 
 
-def order(type, srcCurrency, dstCurrency, amount, price, execution = "limit"):
+def order(type_, src_currency, dst_currency, amount, price, token, execution=True):
     # Use this function to order.
     # type : "buy" or "sell"
-    # srcCurrency : Source Currency
-    # dstCurrency : Destination Currency
-    # amount = The amount you want to buy.
-    # price = Price to buy.
-    # execution = "limit" or "market"
+    # src_currency : Source Currency
+    # dst_currency : Destination Currency
+    # amount = The amount you want to buy or sell.
+    # price = Price to buy or sell.
+    # execution = (False = 'limit') and (True = 'market')
     # For quick order use word "market" for execution.
     # Limitation : 100 requests per 10 minutes.
+    execution = 'market' if execution else 'limit'
     price = int(price)
-    open_token = open("token.txt", "r")
-    token = open_token.read()
-    header = {"Authorization": "token " + token,
-              "content-type": "application/json"}
-    open_token.close()
-    try:
-        response = requests.post(
-            url = URL + "/market/orders/add",
-            headers = header,
-            json = {
-                "type": type,
-                "execution": execution,
-                "srcCurrency": srcCurrency,
-                "dstCurrency": dstCurrency,
-                "amount": amount,
-                "price": price
-            }
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"Completed. \n{response.json()}")
-            # print(response.status_code)
-    except requests.exceptions.RequestException as error:
-        if response.status_code == 401:
-            print(f"ERROR! \nplease login then try again. \n{error}")
+    json = {
+        "type": type_,
+        "execution": execution,
+        "srcCurrency": src_currency,
+        "dstCurrency": dst_currency,
+        "amount": amount,
+        "price": price
+    }
+    status_response, response = request(path='/market/orders/add', json=json, token=token)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == "ok":
+            order_ = response.json()['order']
+            return f'ok \nOrder: \n{order_}'
         else:
-            print(f"ERROR! \n{error}")
+            error = response.json()
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
+
 
 def order_status(order_ID):
     # Use this function to get order status.
