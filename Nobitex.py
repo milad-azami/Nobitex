@@ -235,25 +235,22 @@ def wallets_list(token=None):
         return f'failed \n{response.json()}'
 
 
-def wallets_balance(currency, token=None):
-    # Use this function to get your wallet balance.
+def wallets_balance(currency=None, token=None):
+    # Return your wallet balance.
     # currency : The wallet you want like "btc" or 'ltc" etc.
-    header = {"Authorization": "Token " + token,
-              "content-type": "application/json"}
-    try:
-        response = requests.post(
-            url = URL + "/users/wallets/balance",
-            headers = header,
-            json = {
-                "currency": currency
-            }
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(response.json())
-            # print(response.status_code)
-    except requests.exceptions.RequestException as error:
-        print(response.json())
+    json = {
+        'currency': currency
+    }
+    status_response, response = request(path='/users/wallets/balance', json=json, token=token)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == "ok":
+            balance = response.json()['balance']
+            return f'ok \nBalance: \n{balance} {currency}'
+        else:
+            error = response.json()['detail']
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
 
 def transactions_list(wallet_ID):
     # Use this function to see your transactions history.
