@@ -247,7 +247,7 @@ def wallets_balance(currency=None, token=None):
             balance = response.json()['balance']
             return f'ok \nBalance: \n{balance} {currency}'
         else:
-            error = response.json()['detail']
+            error = response.json()
             return f'failed \n{error}'
     else:
         return f'failed \n{response.json()}'
