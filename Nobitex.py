@@ -256,7 +256,7 @@ def wallets_balance(currency=None, token=None):
 def transactions_list(wallet_id=None, token=None):
     # Return your transactions history.
     # wallet_id : ID of the wallet you want.
-    # wallet_id = integer
+    wallet_id = int(wallet_id)
     json = {
         'wallet': wallet_id
     }
@@ -272,31 +272,25 @@ def transactions_list(wallet_id=None, token=None):
         return f'failed \n{response.json()}'
 
 
-def deposit_withdraw(wallet_ID):
-    # Use this function to get a list of deposits and withdrawals.
-    # wallet_ID : ID of the wallet you want.
-    open_token = open("token.txt", "r")
-    token = open_token.read()
-    header = {"Authorization": "Token " + token,
-              "content-type": "application/json"}
-    open_token.close()
-    try:
-        response = requests.post(
-            url = URL + "/users/wallets/deposits/list",
-            headers = header,
-            json = {
-                "wallet": wallet_ID
-            }
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"List of deposits and withdrawals: \n{response.json()}")
-            # print(response.status_code)
-    except requests.exceptions.RequestException as error:
-        if response.status_code == 401:
-            print(f"ERROR! \nplease login then try again. \n{error}")
+def deposit_withdraw(wallet_id=None, token=None):
+    # Return a list of deposits and withdrawals.
+    # wallet_id : ID of the wallet you want.
+    # wallets_id : string
+    json = {
+        'wallet': wallet_id
+    }
+    status_response, response = request(path='/users/wallets/deposits/list', json=json, token=token)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == "ok":
+            deposit = response.json()['deposits']
+            withdraw = response.json()['withdraws']
+            return f'ok \nDeposits: \n{deposit} \nWithdraws: \n{withdraw}'
         else:
-            print(f"ERROR! \n{error}")
+            error = response.json()
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
+
 
 def generate_address(wallet_ID):
     # Use this function to generate your block chain address.
