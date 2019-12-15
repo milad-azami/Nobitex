@@ -252,32 +252,25 @@ def wallets_balance(currency=None, token=None):
     else:
         return f'failed \n{response.json()}'
 
-def transactions_list(wallet_ID):
-    # Use this function to see your transactions history.
-    # wallet_ID : ID of the wallet you want.
-    wallet_ID = int(wallet_ID)
-    open_token = open("token.txt", "r")
-    token = open_token.read()
-    header = {"Authorization": "Token " + token,
-              "content-type": "application/json"}
-    open_token.close()
-    try:
-        response = requests.post(
-            url = URL + "/users/wallets/transactions/list",
-            headers = header,
-            json = {
-                "wallet": wallet_ID
-            }
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"Your transactions list: \n{response.json()}")
-            # print(response.status_code)
-    except requests.exceptions.RequestException as error:
-        if response.status_code == 401:
-            print(f"ERROR! \nplease login then try again. \n{error}")
+
+def transactions_list(wallet_id=None, token=None):
+    # Return your transactions history.
+    # wallet_id : ID of the wallet you want.
+    # wallet_id = integer
+    json = {
+        'wallet': wallet_id
+    }
+    status_response, response = request(path='/users/wallets/transactions/list', json=json, token=token)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == "ok":
+            transaction = response.json()['transactions']
+            return f'ok \nTransactions: \n{transaction}'
         else:
-            print(f"ERROR! \n{error}")
+            error = response.json()
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
+
 
 def deposit_withdraw(wallet_ID):
     # Use this function to get a list of deposits and withdrawals.
@@ -462,4 +455,3 @@ def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
         else:
             print(f"ERROR! \n{error}")
 
-wallets_balance("btc", 'eeaa1200a7db1cdd42c2a7399054c1a38db3e36e')
