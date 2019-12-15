@@ -205,28 +205,21 @@ def referral_code(token=None):
             return f'failed \n{error}'
     else:
         return f'failed \n{response.json()}'
-    
 
-def limitations():
-    # Use this function to see your limitations in NOBITEX crypto exchange.
-    open_token = open("token.txt", "r")
-    token = open_token.read()
-    header = {"Authorization": "Token " + token}
-    open_token.close()
-    try:
-        response = requests.post(
-            url = URL + "/users/limitations",
-            headers = header
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"Your limitations according to your authentication: \n{response.json()}")
-            # print(f"status code = {response.status_code}")
-    except requests.exceptions.RequestException as error:
-        if response.status_code == 401:
-            print(f"ERROR! \nplease login then try again. \n{error}")
+
+def limitations(token=None):
+    # Return your limitations in NOBITEX crypto exchange.
+    status_response, response = request(path='/users/limitations', token=token)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == "ok":
+            limitation = response.json()['limitations']
+            return f'ok \nLimitations: \n{limitation}'
         else:
-            print(f"ERROR! \n{error}")
+            error = response.json()['detail']
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
+
 
 def wallets_list():
     # Use this function to see your own list of wallets.
