@@ -342,38 +342,29 @@ def order(type_, src_currency, dst_currency, amount, price, token, execution=Tru
             return f'failed \n{error}'
     else:
         return f'failed \n{response.json()}'
-    
 
-def order_cancel(srcCurrency, dstCurrency, hours, execution = "market"):
+
+def order_cancel(src_currency, dst_currency, hours, token, execution="market"):
     # Use this function to cancel order.
     # srcCurrency : Source Currency
     # dstCurrency : Destination Currency
     # hours : To determine the time period you want to cancel its orders.
-    # execution = "limit" or "market"
+    # execution = (False = 'limit') and (True = 'market')
+    execution = 'market' if execution else 'limit'
     hours = float(hours)
-    open_token = open("token.txt", "r")
-    token = open_token.read()
-    header = {"Authorization": "token " + token,
-              "content-type": "application/json"}
-    open_token.close()
-    try:
-        response = requests.post(
-            url=URL + "/market/orders/cancel-old",
-            headers=header,
-            json={
-                "execution": execution,
-                "srcCurrency": srcCurrency,
-                "dstCurrency": dstCurrency,
-                "hours": hours
-            }
-        )
-        response.raise_for_status()
-        if response.status_code == 200:
-            print(f"Completed. \n{response.json()}")
-            # print(response.status_code)
-    except requests.exceptions.RequestException as error:
-        if response.status_code == 401:
-            print(f"ERROR! \nplease login then try again. \n{error}")
+    json = {
+        "execution": execution,
+        "srcCurrency": src_currency,
+        "dstCurrency": dst_currency,
+        "hours": hours
+    }
+    status_response, response = request(path='/market/orders/cancel-old', json=json, token=token)
+    if status_response:
+        if response.status_code == 200 and response.json()['status'] == "ok":
+            status = response.json()['status']
+            return f'Status: \n{status}'
         else:
-            print(f"ERROR! \n{error}")
-
+            error = response.json()
+            return f'failed \n{error}'
+    else:
+        return f'failed \n{response.json()}'
