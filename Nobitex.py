@@ -1,60 +1,32 @@
 import requests
 
 
-URL = "https://testnetapi.nobitex.net"
+production_address = 'https://api.nobitex.ir'
+testnet_address = 'https://testnetapi.nobitex.net'
 
 
-def request(path, json=None, token=None):
+def request(path, json=None, token=None, testnet=False):
+    url = production_address if not testnet else testnet_address
+    header = {'content-type': 'application/json'}
     if token:
-        header = {"Authorization": "Token " + token,
-                  "content-type": "application/json"}
-        if json:
-            try:
-                response = requests.post(
-                    url=URL + path,
-                    headers=header,
-                    json=json
-                )
-                return True, response
-            except Exception as e:
-                error = f'Exception: \n{e}'
-                return False, error
-        else:
-            try:
-                response = requests.post(
-                    url=URL + path,
-                    headers=header
-                )
-                return True, response
-            except Exception as e:
-                error = f'Exception: \n{e}'
-                return False, error
+        header['Authorization'] = "Token " + token
+    if json:
+        try:
+            response = requests.post(url=url + path, headers=header, json=json)
+            return True, response
+        except Exception as e:
+            error = f'Exception: \n{e}'
+            return False, error
     else:
-        header = {"content-type": "application/json"}
-        if json:
-            try:
-                response = requests.post(
-                    url=URL + path,
-                    headers=header,
-                    json=json
-                )
-                return True, response
-            except Exception as e:
-                error = f'Exception: \n{e}'
-                return False, error
-        else:
-            try:
-                response = requests.post(
-                    url=URL + path,
-                    headers=header
-                )
-                return True, response
-            except Exception as e:
-                error = f'Exception: \n{e}'
-                return False, error
+        try:
+            response = requests.post(url=url + path, headers=header)
+            return True, response
+        except Exception as e:
+            error = f'Exception: \n{e}'
+            return False, error
 
 
-def login(username, password, remember=False):
+def login(username, password, remember=False, testnet=False):
     # return status, value: (success and token ) or (failed and error)
     # For long time tokens(30 days), remember=True  must be entered after username and password.
     # otherwise the program sends remember=False by default and receives four-hours tokens.
@@ -64,7 +36,7 @@ def login(username, password, remember=False):
         'password': password,
         'remember': remember
     }
-    status_response, response = request(json=json, path='/auth/login/')
+    status_response, response = request(json=json, path='/auth/login/', testnet=testnet)
     if status_response:
         if response.status_code == 200 and response.json()['key']:
             token = response.json()['key']
@@ -79,9 +51,9 @@ def login(username, password, remember=False):
         return f'failed \n{response.json()}'
 
 
-def profile(token=None):
+def profile(token=None, testnet=False):
     # Return profile and personal information.
-    status_response, response = request(path='/users/profile', token=token)
+    status_response, response = request(path='/users/profile', token=token, testnet=testnet)
     if status_response:
         if response.status_code == 200 and response.json()['profile']:
             profile_ = response.json()['profile']
