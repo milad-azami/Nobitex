@@ -40,15 +40,15 @@ def login(username, password, remember=False, testnet=False):
     if status_response:
         if response.status_code == 200 and response.json()['key']:
             token = response.json()['key']
-            return f'Success \nToken: {token} \nYou need this token for using other function.'
+            return {'status': 'success', 'token': token}
         elif response.status_code == 429:
             error = 'You need to log in with Iran\'s IP.'
-            return error
+            return {'status': 'failed', 'error': error}
         else:
             error = response.json()['non_field_errors']
-            return f'failed \n{error}'
+            return {'status': 'failed', 'error': error}
     else:
-        return f'failed \n{response.json()}'
+        return {'status': 'failed', 'error': response}
 
 
 def profile(token=None, testnet=False):
